@@ -180,9 +180,3 @@ TTL Index
 - Geospatial device queries
 - Bulk telemetry ingestion
 - Aggregation-based statistics
-
---------------------------------------------------
-
-## Author
-
-IoT Telemetry API Assignment
