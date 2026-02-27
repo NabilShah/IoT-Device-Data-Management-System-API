@@ -42,8 +42,7 @@ Create a `.env` file in the root folder.
 
 Example:
 
-MONGO_URI=mongodb://localhost:27017/iot  
-PORT=5000
+MONGO_URI=mongodb://localhost:27017/telemetry
 
 --------------------------------------------------
 
