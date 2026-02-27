@@ -1,0 +1,160 @@
+{
+  "info": {
+    "name": "IoT Telemetry API",
+    "description": "API documentation for an IoT device telemetry platform. Supports device registration, telemetry ingestion, analytics, alerts, filtering, and geospatial queries.",
+    "_postman_id": "iot-telemetry-api-collection",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [
+    {
+      "key": "baseUrl",
+      "value": "http://localhost:5000"
+    }
+  ],
+  "item": [
+    {
+      "name": "Register Device",
+      "request": {
+        "method": "POST",
+        "description": "Registers a new IoT device with type, status, and geographic location.",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "url": "{{baseUrl}}/devices",
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"deviceId\": \"dev-101\",\n  \"type\": \"temperature\",\n  \"lat\": 19.0760,\n  \"long\": 72.8777,\n  \"status\": \"active\"\n}"
+        }
+      }
+    },
+    {
+      "name": "Get Device Details",
+      "request": {
+        "method": "GET",
+        "description": "Fetch device details by deviceId.",
+        "url": "{{baseUrl}}/devices/dev-101"
+      }
+    },
+    {
+      "name": "Update Device Status",
+      "request": {
+        "method": "PATCH",
+        "description": "Update device operational status (active/inactive).",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "url": "{{baseUrl}}/devices/dev-101/status",
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"status\": \"inactive\"\n}"
+        }
+      }
+    },
+    {
+      "name": "List Devices",
+      "request": {
+        "method": "GET",
+        "description": "Returns a paginated list of devices. Optional query parameters: page, limit, type, status.",
+        "url": "{{baseUrl}}/devices?page=1&limit=10"
+      }
+    },
+    {
+      "name": "Filter Devices (type + status)",
+      "request": {
+        "method": "GET",
+        "description": "Filter devices by type and status using query parameters.",
+        "url": "{{baseUrl}}/devices?type=temperature&status=inactive"
+      }
+    },
+    {
+      "name": "Nearby Devices",
+      "request": {
+        "method": "GET",
+        "description": "Retrieve devices within a given radius from latitude and longitude using MongoDB geospatial queries.",
+        "url": "{{baseUrl}}/devices/nearby/search?lat=19.0760&long=72.8777&radius=5000"
+      }
+    },
+    {
+      "name": "Insert Telemetry",
+      "request": {
+        "method": "POST",
+        "description": "Store telemetry data sent from an IoT device.",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "url": "{{baseUrl}}/telemetry",
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"deviceId\": \"dev-101\",\n  \"timestamp\": \"2026-02-24T10:15:00Z\",\n  \"metrics\": {\n    \"temperature\": 25.5,\n    \"humidity\": 60,\n    \"battery\": 92\n  }\n}"
+        }
+      }
+    },
+    {
+      "name": "Bulk Insert Telemetry",
+      "request": {
+        "method": "POST",
+        "description": "Insert multiple telemetry records in a single request for high throughput ingestion.",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "url": "{{baseUrl}}/telemetry/bulk",
+        "body": {
+          "mode": "raw",
+          "raw": "[\n  {\n    \"deviceId\": \"dev-101\",\n    \"timestamp\": \"2026-02-24T10:20:00Z\",\n    \"metrics\": {\n      \"temperature\": 26,\n      \"humidity\": 55,\n      \"battery\": 80\n    }\n  },\n  {\n    \"deviceId\": \"dev-102\",\n    \"timestamp\": \"2026-02-24T10:25:00Z\",\n    \"metrics\": {\n      \"temperature\": 28,\n      \"humidity\": 50,\n      \"battery\": 75\n    }\n  }\n]"
+        }
+      }
+    },
+    {
+      "name": "Get Telemetry by Device",
+      "request": {
+        "method": "GET",
+        "description": "Retrieve telemetry records for a device within a specific time range.",
+        "url": "{{baseUrl}}/telemetry/dev-101?start=2026-02-24T10:00:00Z&end=2026-02-24T11:00:00Z"
+      }
+    },
+    {
+      "name": "Latest Telemetry",
+      "request": {
+        "method": "GET",
+        "description": "Return the most recent telemetry record for each device using MongoDB aggregation.",
+        "url": "{{baseUrl}}/telemetry/latest"
+      }
+    },
+    {
+      "name": "Telemetry Statistics",
+      "request": {
+        "method": "GET",
+        "description": "Calculate average, minimum, and maximum values for a given metric.",
+        "url": "{{baseUrl}}/telemetry/dev-101/stats?metric=temperature&start=2026-02-24T10:00:00Z&end=2026-02-24T11:00:00Z"
+      }
+    },
+    {
+      "name": "Low Battery Devices",
+      "request": {
+        "method": "GET",
+        "description": "Retrieve devices whose battery level is below a specified threshold.",
+        "url": "{{baseUrl}}/telemetry/alerts/low-battery?threshold=20"
+      }
+    },
+    {
+      "name": "Offline Devices",
+      "request": {
+        "method": "GET",
+        "description": "Return devices that have not sent telemetry data within the last 15 minutes.",
+        "url": "{{baseUrl}}/telemetry/alerts/offline"
+      }
+    }
+  ]
+}
